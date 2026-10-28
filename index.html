@@ -24,4 +24,32 @@ async function loadLiveStocks(){
     console.error('V6 데이터 연결 오류:', error);
   }
 }
-loadLiveStocks();</script></body></html>
+
+const livePanel = document.createElement('section');
+livePanel.className = 'panel';
+livePanel.innerHTML = '<h2>📡 V6 자동 수집 주가</h2><div id="liveQuotes">데이터 불러오는 중...</div>';
+document.querySelector('header').after(livePanel);
+
+async function showLiveQuotes() {
+  const area = document.getElementById('liveQuotes');
+  try {
+    const response = await fetch('./data/stocks.json?t=' + Date.now());
+    if (!response.ok) throw new Error('데이터 요청 실패');
+    const data = await response.json();
+    area.replaceChildren();
+
+    for (const stock of data.stocks || []) {
+      const item = document.createElement('p');
+      const price = Number(stock.price);
+      const change = Number(stock.change_percent);
+      item.textContent = `${stock.symbol} | $${price.toFixed(2)} | ${change.toFixed(2)}%`;
+      area.appendChild(item);
+    }
+    if (!area.children.length) area.textContent = '표시할 종목이 없어요.';
+  } catch (error) {
+    area.textContent = '주가 데이터를 불러오지 못했어요.';
+  }
+}
+showLiveQuotes();
+  
+  loadLiveStocks();</script></body></html>
