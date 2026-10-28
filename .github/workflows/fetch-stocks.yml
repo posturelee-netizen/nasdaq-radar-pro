@@ -1,0 +1,40 @@
+name: V6 Fetch Stock Quotes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v6-stock-fetch
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Fetch stock quotes
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python fetch_stocks.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/stocks.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update V6 stock quotes"
+            git push
+          fi
