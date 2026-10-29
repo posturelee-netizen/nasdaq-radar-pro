@@ -1,6 +1,7 @@
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
+
   const symbol = (url.searchParams.get("symbol") || "GPUS")
     .trim()
     .toUpperCase();
@@ -23,8 +24,9 @@ export async function onRequestGet(context) {
 
   try {
     const endpoint =
-      "https://api.massive.com/v2/last/trade/" +
-      encodeURIComponent(symbol);
+      "https://api.massive.com/v2/aggs/ticker/" +
+      encodeURIComponent(symbol) +
+      "/prev?adjusted=true";
 
     const response = await fetch(endpoint, {
       headers: {
@@ -45,16 +47,39 @@ export async function onRequestGet(context) {
       );
     }
 
+    const bar = data.results?.[0];
+
+    if (!bar) {
+      return Response.json({
+        symbol,
+        price: null,
+        status: "NO_DATA",
+        message: "No previous trading day data available"
+      });
+    }
+
     return Response.json({
       symbol,
-      price: data.results?.p ?? null,
-      timestamp: data.results?.t ?? null,
+      price: bar.c,
+      open: bar.o,
+      high: bar.h,
+      low: bar.l,
+      close: bar.c,
+      volume: bar.v,
+      vwap: bar.vw ?? null,
+      timestamp: bar.t,
       source: "Massive",
-      status: data.status ?? "OK"
+      dataType: "previous_close",
+      delayed: true,
+      status: "OK"
     });
+
   } catch (error) {
     return Response.json(
-      { error: "Failed to fetch market data" },
+      {
+        symbol,
+        error: "Failed to fetch market data"
+      },
       { status: 502 }
     );
   }
