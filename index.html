@@ -1,10 +1,48 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090e20"><title>NASDAQ RADAR PRO V7</title><style>
-:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}*{box-sizing:border-box}body{margin:0;background:#090e20;color:#eaf0ff}main{max-width:950px;margin:auto;padding:22px 15px 60px}h1{font-size:clamp(25px,5vw,37px);margin:8px 0}p,small,.muted{color:#adbad6;line-height:1.55}.tag{display:inline-block;border:1px solid #52668e;border-radius:15px;padding:7px 10px;color:#d2dcf6;font-size:12px}.notice,.panel{background:#17233b;border:1px solid #334866;border-radius:17px;padding:16px;margin:16px 0}input,button,select{font:inherit;border-radius:11px;padding:12px;background:#111b30;border:1px solid #556987;color:white}input{width:100%;min-width:100px}button{cursor:pointer;background:#275cbb;border-color:#3876e2;font-weight:700}button:disabled{opacity:.55}button.secondary{background:#1b2b47;border-color:#4d6288}.form{display:flex;gap:8px;flex-wrap:wrap}.form input{flex:1}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{padding:13px;background:#0d1830;border-radius:12px}.metric small{display:block;font-size:12px}.metric b{display:block;font-size:19px;margin-top:5px}.positive{color:#6fe4a8}.negative{color:#ff9eab}.warn{color:#ffcc79}.pill{padding:7px 10px;border-radius:20px;background:#2c3c59;display:inline-block;font-size:12px}h2{font-size:19px}a{color:#9cc5ff;overflow-wrap:anywhere}.item{padding:11px 0;border-bottom:1px solid #34455e}.item:last-child{border:0}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.row>*{min-width:0}.small{font-size:12px}.empty{color:#b5c2db;padding:16px 0}.stack{display:grid;gap:8px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}canvas{width:100%;height:170px;background:#0c1730;border-radius:12px}@media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}button{padding:11px}.form input{flex-basis:100%}}
-</style></head><body><main><span class="tag">V7 · API 연결형 통합 대시보드</span><h1>📡 NASDAQ RADAR PRO</h1><p>실제 티커 조회 · 기술지표 · SEC 공시. 데이터 제공 권한과 지연에 따라 일부 기능이 제한될 수 있습니다.</p><div class="notice"><b>🟡 연결 상태: <span id="state">아직 조회하지 않음</span></b><div class="small muted">이 화면에는 가상 주가를 표시하지 않습니다. 무료 API는 실시간 전체 나스닥 스캔을 제공하지 않을 수 있습니다. 매수·매도 점수는 참고용 규칙 기반 신호입니다.</div></div><section class="panel"><h2>🔎 종목 분석</h2><form class="form" id="searchForm"><input id="symbol" maxlength="8" placeholder="티커 입력 (예: GPUS, NVDA)" autocomplete="off" autocapitalize="characters" required><button id="go" type="submit">조회·분석</button></form><div class="chips"><button class="secondary" data-t="GPUS">GPUS</button><button class="secondary" data-t="NVDA">NVDA</button><button class="secondary" data-t="ASTS">ASTS</button><button class="secondary" data-t="YMAT">YMAT</button></div><div id="error" class="negative" role="status"></div></section><section class="panel"><div class="row"><h2>📈 가격·신호</h2><span class="pill" id="signal">조회 전</span></div><p id="source" class="small muted">실제 데이터 조회 후 표시됩니다.</p><div class="grid"><div class="metric"><small>최근 종가</small><b id="close">—</b></div><div class="metric"><small>등락률 (전일 대비)</small><b id="change">—</b></div><div class="metric"><small>거래량</small><b id="volume">—</b></div><div class="metric"><small>VWAP (분봉)</small><b id="vwap">—</b></div><div class="metric"><small>9EMA (분봉)</small><b id="ema">—</b></div><div class="metric"><small>RSI 14 (분봉)</small><b id="rsi">—</b></div><div class="metric"><small>1분 거래량 배수</small><b id="surge">—</b></div><div class="metric"><small>신호 점수</small><b id="score">—</b></div><div class="metric"><small>숏잔고 / CTB</small><b>미연결</b></div></div><p id="interpret" class="muted small">분봉 데이터가 제공되면 지표를 계산합니다. 분봉이 없으면 일봉 가격만 표시됩니다.</p><canvas id="chart" width="900" height="200" aria-label="분봉 종가 추이"></canvas></section><section class="panel"><div class="row"><h2>📄 SEC 최근 공시</h2><span class="pill">공식 EDGAR</span></div><div class="chips"><button class="secondary" id="secBtn">현재 티커 공시 조회</button></div><div class="small muted">S-3, 424B, 8-K, EFFECT 등은 검토 대상일 뿐 희석 확정 신호가 아닙니다. 실제 ATM·워런트 조건은 원문 확인이 필요합니다.</div><div id="secResults" class="empty">종목 조회 후 공시를 확인할 수 있어요.</div></section><section class="panel"><h2>⚙️ 기능 연결 현황</h2><div class="item">🟢 개별 티커 가격 · 분봉 조회 <span class="muted">Massive API 권한 내</span></div><div class="item">🟢 VWAP · EMA · RSI · 거래량 신호 <span class="muted">분봉 제공 시 계산</span></div><div class="item">🟢 SEC 공식 공시 목록 <span class="muted">EDGAR 연결</span></div><div class="item">🟡 전체 나스닥 자동 스캔 <span class="muted">시장 전체 데이터·백엔드 작업 필요</span></div><div class="item">🟡 실시간 숏잔고 · CTB <span class="muted">별도 데이터 공급자 필요</span></div><div class="item">🟡 아이폰 푸시 알림 <span class="muted">알림 서비스 설정 필요</span></div></section><p class="small muted">V7 · 실제 API 연결 테스트는 배포 후 필요합니다. 자동매매 기능 없음. 투자 결정 전 시세·공시 원문을 확인하세요.</p></main><script>
-const $=id=>document.getElementById(id);let current='';const money=n=>Number.isFinite(n)?'$'+n.toFixed(n<1?4:2):'—';const num=n=>Number.isFinite(n)?Math.round(n).toLocaleString('en-US'):'—';const pct=n=>Number.isFinite(n)?(n>0?'+':'')+n.toFixed(2)+'%':'—';const val=(id,v)=>$(id).textContent=v;async function api(path){const r=await fetch(path);const d=await r.json().catch(()=>({error:'서버 응답 오류'}));if(!r.ok)throw Error(d.error||'API 오류');return d}
-function ema(arr,p){if(arr.length<p)return null;let x=arr.slice(0,p).reduce((a,b)=>a+b,0)/p,k=2/(p+1);for(let i=p;i<arr.length;i++)x=arr[i]*k+x*(1-k);return x}function rsi(arr,p=14){if(arr.length<=p)return null;let gain=0,loss=0;for(let i=1;i<=p;i++){const d=arr[i]-arr[i-1];gain+=Math.max(0,d);loss+=Math.max(0,-d)}gain/=p;loss/=p;for(let i=p+1;i<arr.length;i++){const d=arr[i]-arr[i-1];gain=(gain*(p-1)+Math.max(0,d))/p;loss=(loss*(p-1)+Math.max(0,-d))/p}return loss===0?(gain===0?50:100):100-100/(1+gain/loss)}
-function draw(bars){const c=$('chart'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(bars.length<2)return;const a=bars.slice(-100).map(x=>x.c),min=Math.min(...a),max=Math.max(...a),span=max-min||1;ctx.strokeStyle='#6db4ff';ctx.lineWidth=3;ctx.beginPath();a.forEach((v,i)=>{const x=16+i/(a.length-1)*(c.width-32),y=12+(max-v)/span*(c.height-24);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}
-async function lookup(symbol){current=symbol;val('error','');val('state','조회 중…');$('go').disabled=true;['close','change','volume','vwap','ema','rsi','surge','score'].forEach(x=>val(x,'—'));val('signal','분석 대기');val('secResults','공시 버튼을 눌러 확인하세요.');const c=$('chart').getContext('2d');c.clearRect(0,0,900,200);let day=null,bars=[];try{day=await api('/.netlify/functions/quote?symbol='+encodeURIComponent(symbol));val('close',money(day.close));val('volume',num(day.volume));val('source',`${symbol} · ${day.date} · ${day.source}`);val('state','일봉 연결됨')}catch(e){val('error','일봉: '+e.message);val('state','일봉 연결 실패')}
-try{const result=await api('/.netlify/functions/bars?symbol='+encodeURIComponent(symbol));bars=result.bars||[];if(bars.length<16)throw Error('분봉 부족 — 현재 플랜에서 제공되지 않을 수 있습니다.');const closes=bars.map(x=>x.c),last=bars.at(-1),e=ema(closes,9),r=rsi(closes),tail=bars.slice(-20),vw=tail.reduce((s,x)=>s+(x.vw??(x.h+x.l+x.c)/3)*x.v,0)/Math.max(1,tail.reduce((s,x)=>s+x.v,0));const prev=bars.slice(-21,-1),avg=prev.reduce((s,x)=>s+x.v,0)/Math.max(1,prev.length),surge=avg?last.v/avg:null;let score=(last.c>e?25:0)+(last.c>vw?25:0)+(surge>=3?30:surge>=1.5?15:0)+(r>=45&&r<=70?20:0);val('vwap',money(vw));val('ema',money(e));val('rsi',r.toFixed(1));val('surge',surge?.toFixed(2)+'×'||'—');val('score',score+'/100');val('signal',score>=75?'🟢 매수 관심':score<=25?'🔴 주의':'🟡 관찰');val('interpret',`최근 분봉: ${new Date(last.t).toLocaleString('ko-KR')} · ${bars.length}개 봉으로 계산. 점수는 거래량·가격 위치·RSI 규칙 기반이며 미래 수익을 예측하지 않습니다.`);val('state','분봉 연결됨 (지연 가능)');draw(bars);if(!day){val('close',money(last.c));val('volume',num(last.v));val('source',result.source)}else if(bars.length>1){const lastDay=bars.at(-1).c,first=bars[0].c;val('change',pct((lastDay/first-1)*100));$('change').title='조회된 분봉 구간 시작 대비 (전일 대비가 아님)'}}catch(e){val('interpret','분봉 조회 불가: '+e.message+' 일봉과 SEC 공시 기능은 별도로 사용할 수 있습니다.' );if(day)val('signal','일봉만 확인');else val('signal','데이터 없음')}finally{$('go').disabled=false}}
-$('searchForm').addEventListener('submit',e=>{e.preventDefault();const s=$('symbol').value.trim().toUpperCase();if(/^[A-Z]{1,5}(?:[.-][A-Z]{1,2})?$/.test(s))lookup(s);else val('error','티커 형식을 확인하세요.')});document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{$('symbol').value=b.dataset.t;lookup(b.dataset.t)});$('secBtn').onclick=async()=>{if(!current){val('secResults','먼저 티커를 조회해 주세요.');return}val('secResults','SEC 조회 중…');try{const d=await api('/.netlify/functions/sec?symbol='+encodeURIComponent(current));const relevant=d.filings.filter(x=>/^(S-3|S-1|424B|8-K|EFFECT|F-3|6-K|POS AM|SC 13)/.test(x.form));const list=relevant.slice(0,15);$('secResults').replaceChildren();const title=document.createElement('p');title.textContent=`${d.name} · 검토 대상 ${relevant.length}건 (최근 공시 120건 중)`;$('secResults').append(title);if(!list.length){const p=document.createElement('p');p.textContent='최근 조회 범위에서 지정한 공시 유형이 없습니다. 희석 위험이 없다는 뜻은 아닙니다.';$('secResults').append(p)}list.forEach(x=>{const div=document.createElement('div');div.className='item';const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=`${x.date} · ${x.form} · ${x.description||'공시 원문'}`;div.append(a);$('secResults').append(div)})}catch(e){val('secResults','SEC 조회 실패: '+e.message)}};
-</script></body></html>
+V7 · API 연결형 통합 대시보드
+📡 NASDAQ RADAR PRO
+실제 티커 조회 · 기술지표 · SEC 공시. 데이터 제공 권한과 지연에 따라 일부 기능이 제한될 수 있습니다.
+🟡 연결 상태: 아직 조회하지 않음
+이 화면에는 가상 주가를 표시하지 않습니다. 무료 API는 실시간 전체 나스닥 스캔을 제공하지 않을 수 있습니다. 매수·매도 점수는 참고용 규칙 기반 신호입니다.
+🔎 종목 분석
+
+조회·분석
+GPUS
+NVDA
+ASTS
+YMAT
+
+📈 가격·신호
+조회 전
+실제 데이터 조회 후 표시됩니다.
+최근 종가
+—
+등락률 (전일 대비)
+—
+거래량
+—
+VWAP (분봉)
+—
+9EMA (분봉)
+—
+RSI 14 (분봉)
+—
+1분 거래량 배수
+—
+신호 점수
+—
+숏잔고 / CTB
+미연결
+분봉 데이터가 제공되면 지표를 계산합니다. 분봉이 없으면 일봉 가격만 표시됩니다.
+📄 SEC 최근 공시
+공식 EDGAR
+현재 티커 공시 조회
+S-3, 424B, 8-K, EFFECT 등은 검토 대상일 뿐 희석 확정 신호가 아닙니다. 실제 ATM·워런트 조건은 원문 확인이 필요합니다.
+종목 조회 후 공시를 확인할 수 있어요.
+⚙️ 기능 연결 현황
+🟢 개별 티커 전일 가격·거래량 Massive 무료 API
+🟡 분봉 · VWAP · EMA · RSI · 거래량 신호 분봉 API 미연결
+🟡 SEC 공식 공시 목록 Cloudflare SEC API 미연결
+🟡 전체 나스닥 자동 스캔 시장 전체 데이터·백엔드 작업 필요
+🟡 실시간 숏잔고 · CTB 별도 데이터 공급자 필요
+🟡 아이폰 푸시 알림 알림 서비스 설정 필요
+V7 · 실제 API 데이터 기반. 전일 데이터이며 실시간 시세가 아닙니다. 자동매매 기능 없음. 투자 결정 전 시세·공시 원문을 확인하세요.
