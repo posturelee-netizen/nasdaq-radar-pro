@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-02T21:13:04.788348+00:00",
+  "updated_at": "2026-11-02T22:13:09.764196+00:00",
   "source": "Finnhub",
   "stocks": [
     {
       "symbol": "AAPL",
-      "price": 339.31,
-      "change_percent": -1.5437,
+      "price": 338.32,
+      "change_percent": -1.8309,
       "previous_close": 344.63,
       "quote_timestamp": 1793653200
     },
