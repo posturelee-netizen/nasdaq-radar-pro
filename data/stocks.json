@@ -1,41 +1,41 @@
 {
-  "updated_at": "2026-11-02T17:27:20.519201+00:00",
+  "updated_at": "2026-11-02T18:23:15.401112+00:00",
   "source": "Finnhub",
   "stocks": [
     {
       "symbol": "AAPL",
-      "price": 338.01,
-      "change_percent": -1.9209,
+      "price": 337.49,
+      "change_percent": -2.0718,
       "previous_close": 344.63,
-      "quote_timestamp": 1793640410
+      "quote_timestamp": 1793643765
     },
     {
       "symbol": "MSFT",
-      "price": 520.46,
-      "change_percent": -0.2778,
+      "price": 520.05,
+      "change_percent": -0.3564,
       "previous_close": 521.91,
-      "quote_timestamp": 1793640410
+      "quote_timestamp": 1793643763
     },
     {
       "symbol": "NVDA",
-      "price": 206.79,
-      "change_percent": 1.0506,
+      "price": 206.66,
+      "change_percent": 0.9871,
       "previous_close": 204.64,
-      "quote_timestamp": 1793640410
+      "quote_timestamp": 1793643765
     },
     {
       "symbol": "AMD",
-      "price": 488.39,
-      "change_percent": -3.2508,
+      "price": 482.55,
+      "change_percent": -4.4077,
       "previous_close": 504.8,
-      "quote_timestamp": 1793640408
+      "quote_timestamp": 1793643764
     },
     {
       "symbol": "TSLA",
-      "price": 410.77,
-      "change_percent": 2.7413,
+      "price": 408.65,
+      "change_percent": 2.2111,
       "previous_close": 399.81,
-      "quote_timestamp": 1793640410
+      "quote_timestamp": 1793643765
     }
   ]
 }
